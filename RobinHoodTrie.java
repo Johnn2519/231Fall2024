@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a Robin Hood Trie data structure
  */
@@ -10,7 +13,7 @@ public class RobinHoodTrie {
 
     /**
      * Default constructor for the Trie
-	 * Initialises the root
+     * Initialises the root
      */
     RobinHoodTrie() {
         this.root = new RobinHoodTrieNode();
@@ -218,4 +221,85 @@ public class RobinHoodTrie {
             }
         }
     }
+
+    /**
+     * Serches for a given word in the trie
+     * 
+     * @param word
+     * @return
+     */
+    public boolean search(String word) {
+        RobinHoodTrieNode currentNode = this.root;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (currentNode.hashTable == null) {
+                return false;
+            }
+            if (!currentNode.hashTable.search(c)) {
+                return false;
+            }
+            for (RobinHoodTrieNode.RobinHoodHashing.Element element : currentNode.hashTable.table) {
+                if (element != null && element.key == c) {
+                    currentNode = element.robinHoodTrieNode;
+                    break;
+                }
+            }
+        }
+        return currentNode.importance > 0;
+    }
+
+    /**
+     * NOT WORKING PROPERLY
+     * 
+     * Thelei na allaxtei gia tes odigies tou lab
+     * 
+     * @param prefix
+     * @return
+     */
+    public List<String> autocomplete(String prefix) {
+        RobinHoodTrieNode currentNode = this.root;
+        List<String> results = new ArrayList<>();
+
+        // Traverse the trie to the end of the prefix
+        for (int i = 0; i < prefix.length(); i++) {
+            char c = prefix.charAt(i);
+            if (currentNode.hashTable == null || !currentNode.hashTable.search(c)) {
+                return results; // Return empty list if prefix doesn't exist
+            }
+            for (RobinHoodTrieNode.RobinHoodHashing.Element element : currentNode.hashTable.table) {
+                if (element != null && element.key == c) {
+                    currentNode = element.robinHoodTrieNode;
+                    break;
+                }
+            }
+        }
+
+        // Recursively gather all words from the current node
+        gatherWords(currentNode, prefix, results);
+        return results;
+    }
+
+    /**
+     * Recursively runs the trie starting from the given node and gathers all
+     * valid words into the results list.
+     *
+     * @param node
+     * @param prefix
+     * @param results
+     */
+
+    private void gatherWords(RobinHoodTrieNode node, String prefix, List<String> results) {
+        if (node.importance > 0) {
+            results.add(prefix);
+        }
+        if (node.hashTable == null) {
+            return;
+        }
+        for (RobinHoodTrieNode.RobinHoodHashing.Element element : node.hashTable.table) {
+            if (element != null && element.robinHoodTrieNode != null) {
+                gatherWords(element.robinHoodTrieNode, prefix + element.key, results);
+            }
+        }
+    }
+
 }
