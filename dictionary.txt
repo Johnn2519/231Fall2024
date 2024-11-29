@@ -1,0 +1,4 @@
+apple
+app
+apples
+append
