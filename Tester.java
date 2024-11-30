@@ -1,18 +1,55 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class Tester {
-    public static void main(String[] args) {
-        RobinHoodTrie trie = new RobinHoodTrie();
+	public static void main(String[] args) {
+		RobinHoodTrie trie = new RobinHoodTrie();
+		MinHeap minHeap = null;
+		Scanner dictionary = null;
+		Scanner importance = null;
+		Scanner scan = new Scanner(System.in);
+		String wordInput;
+		String searchWord;
 
-        trie.insertWord("apple");
-        trie.insertWord("app");
-        trie.insertWord("banana");
-        trie.insertWord("band");
-        trie.insertWord("bandana");
+		try {
+			dictionary = new Scanner(new File(args[0]));
+		} catch (FileNotFoundException e) {
+			System.out.println("Error: the file given as dictionary doesn't exist!");
+			System.exit(0);
+		}
 
-        System.out.println("Search for 'apple': " + trie.search("apple")); // Expected: true
-        System.out.println("Search for 'app': " + trie.search("app")); // Expected: true
-        System.out.println("Search for 'band': " + trie.search("band")); // Expected: true
-        System.out.println("Search for 'bandana': " + trie.search("bandana")); // Expected: true
-        System.out.println("Search for 'cat': " + trie.search("cat")); // Expected: false
+		try {
+			importance = new Scanner(new File(args[1]));
+		} catch (FileNotFoundException e) {
+			System.out.println("Error: the file given as sample text doesn't exist!");
+			System.exit(0);
+		}
 
-    }
+		while (dictionary.hasNextLine()) {
+			wordInput = dictionary.nextLine();
+			trie.insertWord(wordInput);
+		}
+
+		while (importance.hasNext()) {
+			wordInput = importance.next();
+			if (trie.searchWord(wordInput) == true)
+				System.out.println("Successfully detected " + wordInput);
+		}
+
+		System.out.print("Search with (one) word: ");
+		searchWord = scan.nextLine();
+
+		System.out.print("Choose (>0) amount of suggested words for " + searchWord + ": ");
+		int k = scan.nextInt();
+		while (k <= 0) {
+			System.out.println("Invalid amount given!\n Try again: ");
+			k = scan.nextInt();
+		}
+		minHeap = new MinHeap(k);
+		System.out.println("Checking for top " + k + " reccomended words for " + searchWord + ":");
+		trie.autocomplete(searchWord, minHeap);
+
+		scan.close();
+	}
 }
