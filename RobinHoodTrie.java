@@ -283,7 +283,7 @@ public class RobinHoodTrie {
 		// Call criteria methods to collect all valid recommendations
 		prefixCriteria(minHeap, currentNode, stringGiven, true);
 		sameLengthCriteria(minHeap, currentNode, stringGiven, "", 0, 0);
-		differentLengthCriteria(minHeap, currentNode, stringGiven, stringGiven, 0, 0, 0);
+		differentLengthCriteria(minHeap, currentNode, stringGiven, stringGiven, 0, 0);
 
 		for (MinHeap.HeapElement element : minHeap.heapContents) {
 			if (element != null)
@@ -384,44 +384,41 @@ public class RobinHoodTrie {
 	}
 
 	private void differentLengthCriteria(MinHeap minHeap, RobinHoodTrieNode node, String wordGiven, String currentWord,
-			int distanceFromRoot, int differences, int lengthDifference) {
-		// Stop recursion if length difference is invalid or mismatches exceed 2
-		if (lengthDifference > 2 || lengthDifference < -1 || differences > 2) {
-			return;
-		}
+			int distanceFromRoot, int differences) {
+		// For words that are either 2 characters longer or 1 character shorter
+		int lengthDifference = Math.abs(node.wordLength - wordGiven.length());
 
-		// If at a valid leaf node, consider it for suggestions
-		if (node.wordLength > 0 && lengthDifference >= -1 && lengthDifference <= 2) {
-			if (minHeap.size < minHeap.maxSize - 1) {
-				minHeap.insertMin(currentWord, node.importance);
-			} else if (minHeap.getTop().importance < node.importance) {
-				minHeap.deleteMin();
-				minHeap.insertMin(currentWord, node.importance);
-			}
-		}
+		// If the length difference is valid (1 shorter or up to 2 longer)
+		if (lengthDifference == 1 || lengthDifference == 2) {
 
-		// Traverse child nodes if the hash table exists
-		if (node.hashTable != null && distanceFromRoot <= wordGiven.length() + 2) {
-			for (RobinHoodTrieNode.RobinHoodHashing.Element element : node.hashTable.table) {
-				if (element != null && element.robinHoodTrieNode != null) {
-					if (distanceFromRoot < wordGiven.length()) {
-						// If within the input word length, compare characters
+			// Compare characters while accepting up to 2 differences
+			if (node.hashTable != null && distanceFromRoot < wordGiven.length() && differences <= 2) {
+				for (RobinHoodTrieNode.RobinHoodHashing.Element element : node.hashTable.table) {
+
+					if (element != null && element.robinHoodTrieNode != null) {
 						if (wordGiven.charAt(distanceFromRoot) == element.key) {
+							// Continue traversal if characters match
 							differentLengthCriteria(minHeap, element.robinHoodTrieNode, wordGiven,
-									currentWord + element.key, distanceFromRoot + 1, differences,
-									lengthDifference);
+									currentWord + element.key,
+									distanceFromRoot + 1, differences);
 						} else {
+							// Allow up to 2 character mismatches
 							differentLengthCriteria(minHeap, element.robinHoodTrieNode, wordGiven,
-									currentWord + element.key, distanceFromRoot + 1, differences + 1,
-									lengthDifference);
+									currentWord + element.key,
+									distanceFromRoot + 1, differences + 1);
 						}
-					} else {
-
-						// If beyond the input word length, consider only additions
-						differentLengthCriteria(minHeap, element.robinHoodTrieNode, wordGiven,
-								currentWord + element.key, distanceFromRoot + 1, differences,
-								lengthDifference + 1);
 					}
+				}
+			}
+
+			// Add word to heap if it matches length criteria and differences are within
+			// limit
+			if (node.wordLength == wordGiven.length() + 1 || node.wordLength == wordGiven.length() + 2) {
+				if (minHeap.size < minHeap.maxSize - 1)
+					minHeap.insertMin(currentWord, node.importance);
+				else if (minHeap.getTop().importance < node.importance) {
+					minHeap.deleteMin();
+					minHeap.insertMin(currentWord, node.importance);
 				}
 			}
 		}
