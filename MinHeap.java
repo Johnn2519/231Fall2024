@@ -34,19 +34,25 @@ public class MinHeap {
 	}
 
 	public void insertMin(String wordValue, int importanceValue) {
+		if (this.size >= this.maxSize - 1) {
+			throw new IllegalStateException("Heap is full");
+		}
 
 		HeapElement newElement = new HeapElement(wordValue, importanceValue);
-		this.size++;
-
-		percolateUp(newElement);
-
+		this.size++; // Increment size
+		percolateUp(newElement); // Re-heapify
 	}
 
 	public HeapElement deleteMin() {
-		HeapElement minimumElement = this.heapContents[1];
+		if (size == 0) {
+			throw new IllegalStateException("Heap is empty");
+		}
 
-		percolateDown(this.heapContents[maxSize - 1]);
+		HeapElement minimumElement = this.heapContents[1];
+		this.heapContents[1] = this.heapContents[size];
+		this.heapContents[size] = null;
 		this.size--;
+		percolateDown(this.heapContents[1]);
 
 		return minimumElement;
 	}
@@ -87,64 +93,28 @@ public class MinHeap {
 	}
 
 	public void percolateDown(HeapElement savedElement) {
-		int pos = 1;
+		int pos = 1; // Start at the root
 
-		/*
-		 * If heap contains only two positions: pos 0 that is unused and pos 1 for a
-		 * single element
-		 */
-		if (this.maxSize == 2) {
-			// Remove the only element in the heap
-			this.heapContents[1] = null;
-			return;
+		while (2 * pos <= this.size) {
+			int child = 2 * pos; // Left child index
+
+			// Find the smaller child
+			if (child + 1 <= this.size
+					&& this.heapContents[child + 1].importance < this.heapContents[child].importance) {
+				child++; // Right child is smaller
+			}
+
+			// If saved element is smaller than the smaller child, stop
+			if (savedElement.importance <= this.heapContents[child].importance) {
+				break;
+			}
+
+			// Move the smaller child up
+			this.heapContents[pos] = this.heapContents[child];
+			pos = child; // Move down to child's position
 		}
 
-		// while there's at least one child available for current element in the heap
-		while (2 * pos < this.maxSize) {
-
-			/*
-			 * If exactly one child is left it means its the last element, so place saved
-			 * element on current position, last spot in heap = null and terminate
-			 * percolateDown
-			 */
-			if ((2 * pos) + 1 >= this.maxSize) {
-				this.heapContents[pos] = savedElement;
-				this.heapContents[this.maxSize - 1] = null;
-				return;
-			}
-
-			/*
-			 * If both children have more or equal importance than saved element's
-			 * importance place saved element on current position, last spot in heap = null
-			 * and terminate percolateDown
-			 */
-			if (this.heapContents[pos * 2].importance >= savedElement.importance
-					&& this.heapContents[pos * 2 + 1].importance >= savedElement.importance) {
-
-				this.heapContents[pos] = savedElement;
-				this.heapContents[this.maxSize - 1] = null;
-				return;
-			}
-
-			/*
-			 * Check which child is smaller in importance, move it upwards and update
-			 * current position in heap
-			 */
-
-			else if (this.heapContents[2 * pos].importance <= this.heapContents[(2 * pos) + 1].importance) {
-				this.heapContents[pos] = this.heapContents[2 * pos];
-				pos = 2 * pos;
-			} else {
-				this.heapContents[pos] = this.heapContents[(2 * pos) + 1];
-				pos = (2 * pos) + 1;
-			}
-		}
-
-		// Move saved element at new last position
-		this.heapContents[this.maxSize - 2] = savedElement;
-		// Set new empty spot at the end of the heap as null
-		this.heapContents[this.maxSize - 1] = null;
-
+		this.heapContents[pos] = savedElement; // Place saved element in its final position
 	}
 
 	public static void main(String args[]) {

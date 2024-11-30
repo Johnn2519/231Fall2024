@@ -13,14 +13,14 @@ public class Tester {
 		String searchWord;
 
 		try {
-			dictionary = new Scanner(new File(args[0]));
+			dictionary = new Scanner(new File("dictionary.txt"));
 		} catch (FileNotFoundException e) {
 			System.out.println("Error: the file given as dictionary doesn't exist!");
 			System.exit(0);
 		}
 
 		try {
-			importance = new Scanner(new File(args[1]));
+			importance = new Scanner(new File("importance.txt"));
 		} catch (FileNotFoundException e) {
 			System.out.println("Error: the file given as sample text doesn't exist!");
 			System.exit(0);
