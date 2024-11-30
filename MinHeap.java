@@ -17,7 +17,7 @@ public class MinHeap {
 
 	}
 
-	private static class HeapElement {
+	public class HeapElement {
 		String word;
 		int importance;
 
@@ -27,6 +27,10 @@ public class MinHeap {
 			this.importance = importanceValue;
 		}
 
+	}
+
+	public HeapElement getTop() {
+		return this.heapContents[1];
 	}
 
 	public void insertMin(String wordValue, int importanceValue) {
@@ -84,24 +88,24 @@ public class MinHeap {
 
 	public void percolateDown(HeapElement savedElement) {
 		int pos = 1;
-		
+
 		/*
-		 * If heap contains only two positions: pos 0 that is unused and pos 1 for a single
-		 * element
+		 * If heap contains only two positions: pos 0 that is unused and pos 1 for a
+		 * single element
 		 */
 		if (this.maxSize == 2) {
 			// Remove the only element in the heap
 			this.heapContents[1] = null;
 			return;
 		}
-		
+
 		// while there's at least one child available for current element in the heap
 		while (2 * pos < this.maxSize) {
 
 			/*
 			 * If exactly one child is left it means its the last element, so place saved
-			 * element on current position, last spot in heap = null
-			 * and terminate percolateDown
+			 * element on current position, last spot in heap = null and terminate
+			 * percolateDown
 			 */
 			if ((2 * pos) + 1 >= this.maxSize) {
 				this.heapContents[pos] = savedElement;
@@ -110,8 +114,8 @@ public class MinHeap {
 			}
 
 			/*
-			 * If both children have more or equal importance than saved element's importance
-			 * place saved element on current position, last spot in heap = null
+			 * If both children have more or equal importance than saved element's
+			 * importance place saved element on current position, last spot in heap = null
 			 * and terminate percolateDown
 			 */
 			if (this.heapContents[pos * 2].importance >= savedElement.importance
@@ -136,11 +140,10 @@ public class MinHeap {
 			}
 		}
 
-			// Move saved element at new last position
-			this.heapContents[this.maxSize - 2] = savedElement;
-			// Set new empty spot at the end of the heap as null
-			this.heapContents[this.maxSize - 1] = null;
-		
+		// Move saved element at new last position
+		this.heapContents[this.maxSize - 2] = savedElement;
+		// Set new empty spot at the end of the heap as null
+		this.heapContents[this.maxSize - 1] = null;
 
 	}
 
@@ -153,7 +156,6 @@ public class MinHeap {
 		m.insertMin("orange", 44);
 		m.insertMin("mango", 26);
 		m.insertMin("grapes", 28);
-
 
 		System.out.println("Contents of heap: ");
 		for (HeapElement h : m.heapContents) {
