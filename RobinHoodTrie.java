@@ -280,15 +280,10 @@ public class RobinHoodTrie {
 		RobinHoodTrieNode currentNode = this.root;
 		// Create MinHeap to store top k words with most importance
 
-		// Recursively gather all words from the current node
-		System.out.println("-------------Checking prefix criteria-------------");
+		// Call criteria methods to collect all valid recommendations
 		prefixCriteria(minHeap, currentNode, stringGiven, true);
-		for (MinHeap.HeapElement element : minHeap.heapContents) {
-			if (element != null)
-				System.out.println(element.word + " " + element.importance);
-		}
-		System.out.println("-------------Checking same length criteria-------------");
 		sameLengthCriteria(minHeap, currentNode, stringGiven, "", 0, 0);
+		
 		for (MinHeap.HeapElement element : minHeap.heapContents) {
 			if (element != null)
 				System.out.println(element.word + " " + element.importance);
