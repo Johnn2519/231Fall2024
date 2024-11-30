@@ -219,7 +219,8 @@ public class RobinHoodTrie {
 	}
 
 	/**
-	 * Searches for a given word in the trie and if its found, increase its importance
+	 * Searches for a given word in the trie and if its found, increase its
+	 * importance
 	 * 
 	 * @param word
 	 * @return
@@ -228,21 +229,24 @@ public class RobinHoodTrie {
 		RobinHoodTrieNode currentNode = this.root;
 		for (int i = 0; i < word.length(); i++) {
 			char c = word.charAt(i);
-			/* If the word's characters lead to an uninitialised hash table
-			 * then the word doesn't exist
+			/*
+			 * If the word's characters lead to an uninitialised hash table then the word
+			 * doesn't exist
 			 */
 			if (currentNode.hashTable == null) {
 				return false;
 			}
-			/* If even a single character of the word doesn't exist in the Trie then
-			 * the word being searched doesn't exist
+			/*
+			 * If even a single character of the word doesn't exist in the Trie then the
+			 * word being searched doesn't exist
 			 */
 			if (!currentNode.hashTable.search(c)) {
 				return false;
 			}
-			/* Iterate through the hash table until the element containing the character
-			 * of the word is found and then set the current node 
-			 * to the node that that element points to
+			/*
+			 * Iterate through the hash table until the element containing the character of
+			 * the word is found and then set the current node to the node that that element
+			 * points to
 			 */
 			for (RobinHoodTrieNode.RobinHoodHashing.Element element : currentNode.hashTable.table) {
 				if (element != null && element.key == c) {
@@ -251,10 +255,13 @@ public class RobinHoodTrie {
 				}
 			}
 		}
+		// If ended on a node with 0 length then the word doesn't exist
+		if (currentNode.wordLength == 0)
+			return false;
 		// Increase word's importance
 		currentNode.importance++;
-		System.out.println(word + " Importance: " + currentNode.importance 
-						+ "\n" + word + " Word Length: " + currentNode.wordLength);
+		System.out.println(word + " Importance: " + currentNode.importance + "\n" + word + " Word Length: "
+				+ currentNode.wordLength);
 
 		// Word exists if it passed all the checks above for every character of the word
 		return true;
@@ -268,26 +275,24 @@ public class RobinHoodTrie {
 	 * @param prefix
 	 * @return
 	 */
-	public void autocomplete(String subString) {
+	public void autocomplete(String stringGiven, MinHeap minHeap) {
+		// Start from the root of the Trie
 		RobinHoodTrieNode currentNode = this.root;
-
-		// Traverse the trie to the end of the prefix
-		for (int i = 0; i < subString.length(); i++) {
-			char c = subString.charAt(i);
-			if (currentNode.hashTable != null && currentNode.hashTable.search(c)) {
-
-				for (RobinHoodTrieNode.RobinHoodHashing.Element element : currentNode.hashTable.table) {
-					if (element != null && element.key == c) {
-						currentNode = element.robinHoodTrieNode;
-						break;
-					}
-				}
-			}
-		}
+		// Create MinHeap to store top k words with most importance
 
 		// Recursively gather all words from the current node
-		prefixCriteria(currentNode, subString, true);
-		System.out.println();
+		System.out.println("-------------Checking prefix criteria-------------");
+		prefixCriteria(minHeap, currentNode, stringGiven, true);
+		for (MinHeap.HeapElement element : minHeap.heapContents) {
+			if (element != null)
+				System.out.println(element.word + " " + element.importance);
+		}
+		System.out.println("-------------Checking same length criteria-------------");
+		sameLengthCriteria(minHeap, currentNode, stringGiven, "", 0, 0);
+		for (MinHeap.HeapElement element : minHeap.heapContents) {
+			if (element != null)
+				System.out.println(element.word + " " + element.importance);
+		}
 
 	}
 
@@ -302,19 +307,83 @@ public class RobinHoodTrie {
 	 *                          avoid printing it
 	 */
 
-	private void prefixCriteria(RobinHoodTrieNode node, String subString, boolean currentlyOnPrefix) {
+	private void prefixCriteria(MinHeap minHeap, RobinHoodTrieNode node, String subString, boolean currentlyOnPrefix) {
+
+		// Descend Trie only if we're currently still on the prefix within the Trie
+		if (currentlyOnPrefix) {
+			// Traverse the trie until the end of the prefix
+			for (int i = 0; i < subString.length(); i++) {
+				char c = subString.charAt(i);
+
+				// Check if the current node contains the current letter of the prefix
+				if (node.hashTable != null && node.hashTable.search(c)) {
+					/*
+					 * Search for element in the hash table holding the current character of the
+					 * prefix
+					 */
+					for (RobinHoodTrieNode.RobinHoodHashing.Element element : node.hashTable.table) {
+						if (element != null && element.key == c) {
+							node = element.robinHoodTrieNode;
+							break;
+						}
+					}
+
+				} // If the prefix doesn't exist in the Trie, no recommendations are available
+				else {
+					System.out.println("No words found starting with " + subString);
+					return;
+				}
+			}
+		}
 
 		if (node.wordLength > 0 && !currentlyOnPrefix) {
-			System.out.println(subString);
+			if (minHeap.size < minHeap.maxSize - 1)
+				minHeap.insertMin(subString, node.importance);
+			else if (minHeap.getTop().importance < node.importance) {
+				minHeap.deleteMin();
+				minHeap.insertMin(subString, node.importance);
+			}
 		}
 		if (node.hashTable != null) {
 
 			for (RobinHoodTrieNode.RobinHoodHashing.Element element : node.hashTable.table) {
 				if (element != null && element.robinHoodTrieNode != null) {
-					prefixCriteria(element.robinHoodTrieNode, subString + element.key, false);
+					prefixCriteria(minHeap, element.robinHoodTrieNode, subString + element.key, false);
 				}
 			}
 		}
 	}
 
+	/**
+	 * @param minHeap          a heap used to store words with the most importance
+	 * @param distanceFromRoot used to check nodes up until a specific distance from
+	 *                         the root
+	 * 
+	 */
+	private void sameLengthCriteria(MinHeap minHeap, RobinHoodTrieNode node, String wordGiven, String currentWord,
+			int distanceFromRoot, int differences) {
+
+		if (node.hashTable != null && distanceFromRoot < wordGiven.length() && !(differences > 2)) {
+			for (RobinHoodTrieNode.RobinHoodHashing.Element element : node.hashTable.table) {
+
+				if (element != null && element.robinHoodTrieNode != null) {
+					if (wordGiven.charAt(distanceFromRoot) == element.key) {
+						sameLengthCriteria(minHeap, element.robinHoodTrieNode, wordGiven, currentWord + element.key,
+								distanceFromRoot + 1, differences);
+					} else {
+						sameLengthCriteria(minHeap, element.robinHoodTrieNode, wordGiven, currentWord + element.key,
+								distanceFromRoot + 1, differences + 1);
+					}
+				}
+			}
+		}
+		if (node.wordLength == wordGiven.length() && differences > 0 && differences <= 2) {
+			if (minHeap.size < minHeap.maxSize - 1)
+				minHeap.insertMin(currentWord, node.importance);
+			else if (minHeap.getTop().importance < node.importance) {
+				minHeap.deleteMin();
+				minHeap.insertMin(currentWord, node.importance);
+			}
+		}
+	}
 }
