@@ -25,10 +25,10 @@ public class Trie {
 		TrieNode temp = this.root;
 		for (int i = 0; i < word.length(); i++) {
 			char c = word.charAt(i);
-			if (temp.subTrieNodes[c - 'a'] == null)
-				temp.subTrieNodes[c - 'a'] = new TrieNode(); // Create new Trie Node being referenced by the specific
-																// slot representing the character
-			temp = temp.subTrieNodes[c - 'a']; // Move downwards
+			if (temp.subTrieNodes[c] == null)
+				temp.subTrieNodes[c] = new TrieNode(); // Create new Trie Node being referenced by the specific
+														// slot representing the character
+			temp = temp.subTrieNodes[c]; // Move downwards
 		}
 		temp.wordLength = word.length();
 	}
@@ -38,11 +38,11 @@ public class Trie {
 		TrieNode temp = this.root;
 		for (int i = 0; i < word.length(); i++) {
 			char c = word.charAt(i);
-			if (temp.subTrieNodes[c - 'a'] == null) { // If a Trie Node representing a character of the word being
-														// searched is null then the word doesn't exist
+			if (temp.subTrieNodes[c] == null) { // If a Trie Node representing a character of the word being
+												// searched is null then the word doesn't exist
 				return false;
 			}
-			temp = temp.subTrieNodes[c - 'a']; // Move to next Trie Node
+			temp = temp.subTrieNodes[c]; // Move to next Trie Node
 
 		}
 
