@@ -249,9 +249,14 @@ public class RobinHoodTrie {
 			 * If even a single character of the word doesn't exist in the Trie then the
 			 * word being searched doesn't exist
 			 */
-			if (!currentNode.hashTable.search(c)) {
+			try {
+				if (!currentNode.hashTable.search(c)) {
+					throw new NullPointerException("HashTable is null");
+				}
+			} catch (NullPointerException e) {
 				return false;
 			}
+			
 			/*
 			 * Iterate through the hash table until the element containing the character of
 			 * the word is found and then set the current node to the node that that element
