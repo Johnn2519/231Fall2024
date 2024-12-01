@@ -28,18 +28,20 @@ public class Tester {
 
 		while (dictionary.hasNextLine()) {
 			wordInput = dictionary.nextLine();
-			wordInput.toLowerCase();
+			wordInput = wordInput.toLowerCase();
 			trie.insertWord(wordInput);
 		}
 
 		while (importance.hasNext()) {
-			wordInput = importance.next().toLowerCase();
+			wordInput = importance.next();
+			wordInput = wordInput.toLowerCase();
 			if (trie.searchWord(wordInput) == true)
 				System.out.println("Successfully detected " + wordInput);
 		}
 
 		System.out.print("Search with (one) word: ");
 		searchWord = scan.nextLine();
+		searchWord = searchWord.toLowerCase();
 
 		System.out.print("Choose (>0) amount of suggested words for " + searchWord + ": ");
 		int k = scan.nextInt();

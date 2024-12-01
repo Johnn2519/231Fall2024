@@ -283,7 +283,7 @@ public class RobinHoodTrie {
 		// Call criteria methods to collect all valid recommendations
 		prefixCriteria(minHeap, currentNode, stringGiven, true);
 		sameLengthCriteria(minHeap, currentNode, stringGiven, "", 0);
-		differentLengthCriteria(minHeap, currentNode, stringGiven, "");
+		//differentLengthCriteria(minHeap, currentNode, stringGiven, "");
 		for (MinHeap.HeapElement element : minHeap.heapContents) {
 			if (element != null)
 				System.out.println(element.word + " " + element.importance);
