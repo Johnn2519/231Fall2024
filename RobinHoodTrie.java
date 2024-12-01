@@ -197,15 +197,15 @@ public class RobinHoodTrie {
 				RobinHoodHashing rehashed = null;
 
 				switch (this.capacity) {
-				case 5:
-					rehashed = new RobinHoodHashing(11);
-					break;
-				case 11:
-					rehashed = new RobinHoodHashing(19);
-					break;
-				case 19:
-					rehashed = new RobinHoodHashing(29);
-					break;
+					case 5:
+						rehashed = new RobinHoodHashing(11);
+						break;
+					case 11:
+						rehashed = new RobinHoodHashing(19);
+						break;
+					case 19:
+						rehashed = new RobinHoodHashing(29);
+						break;
 				}
 
 				for (int i = 0; i < this.capacity; i++) {
@@ -244,7 +244,7 @@ public class RobinHoodTrie {
 			} catch (NullPointerException e) {
 				return false;
 			}
-			
+
 			/*
 			 * If even a single character of the word doesn't exist in the Trie then the
 			 * word being searched doesn't exist
@@ -256,7 +256,7 @@ public class RobinHoodTrie {
 			} catch (NullPointerException e) {
 				return false;
 			}
-			
+
 			/*
 			 * Iterate through the hash table until the element containing the character of
 			 * the word is found and then set the current node to the node that that element
@@ -422,7 +422,6 @@ public class RobinHoodTrie {
 
 						// If currently on a word that is one character shorter
 						if (wordGiven.length() - completeCurrentWord.length() == 1) {
-
 							longerWord = wordGiven;
 							shorterWord = completeCurrentWord;
 							maxStrikes = 1;
