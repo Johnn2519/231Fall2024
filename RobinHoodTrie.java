@@ -237,9 +237,14 @@ public class RobinHoodTrie {
 			 * If the word's characters lead to an uninitialised hash table then the word
 			 * doesn't exist
 			 */
-			if (currentNode.hashTable == null) {
+			try {
+				if (currentNode.hashTable == null) {
+					throw new NullPointerException("HashTable is null");
+				}
+			} catch (NullPointerException e) {
 				return false;
 			}
+			
 			/*
 			 * If even a single character of the word doesn't exist in the Trie then the
 			 * word being searched doesn't exist
