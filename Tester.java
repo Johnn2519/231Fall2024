@@ -13,14 +13,14 @@ public class Tester {
 		String searchWord;
 
 		try {
-			dictionary = new Scanner(new File(args[0]));
+			dictionary = new Scanner(new File("dictionary.txt"));
 		} catch (FileNotFoundException e) {
 			System.out.println("Error: the file given as dictionary doesn't exist!");
 			System.exit(0);
 		}
 
 		try {
-			importance = new Scanner(new File(args[1]));
+			importance = new Scanner(new File("implement.txt"));
 		} catch (FileNotFoundException e) {
 			System.out.println("Error: the file given as sample text doesn't exist!");
 			System.exit(0);
@@ -28,11 +28,12 @@ public class Tester {
 
 		while (dictionary.hasNextLine()) {
 			wordInput = dictionary.nextLine();
+			wordInput.toLowerCase();
 			trie.insertWord(wordInput);
 		}
 
 		while (importance.hasNext()) {
-			wordInput = importance.next();
+			wordInput = importance.next().toLowerCase();
 			if (trie.searchWord(wordInput) == true)
 				System.out.println("Successfully detected " + wordInput);
 		}
