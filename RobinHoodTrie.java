@@ -433,15 +433,17 @@ public class RobinHoodTrie {
 							shorterWord = wordGiven;
 							maxStrikes = 2;
 						}
-						// Check if current word is "hidden" inside word given
-						while (strikes <= maxStrikes && longerWordIndex < longerWord.length()
-								&& shorterWordIndex < shorterWord.length()) {
-							if (longerWord.charAt(longerWordIndex) == shorterWord.charAt(shorterWordIndex))
-								shorterWordIndex++;
-							else
-								strikes++;
+						if (longerWord != null) {
+							// Check if current word is "hidden" inside word given
+							while (strikes <= maxStrikes && longerWordIndex < longerWord.length()
+									&& shorterWordIndex < shorterWord.length()) {
+								if (longerWord.charAt(longerWordIndex) == shorterWord.charAt(shorterWordIndex))
+									shorterWordIndex++;
+								else
+									strikes++;
 
-							longerWordIndex++;
+								longerWordIndex++;
+							}
 						}
 						// If after comparing the two words, maximum strikes were not surpassed, insert
 						// current word in the heap if its importance is higher than that of the top
