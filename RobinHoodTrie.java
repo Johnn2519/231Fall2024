@@ -190,30 +190,45 @@ public class RobinHoodTrie {
 			 * Rehashes the hash table to a larger capacity when needed.
 			 */
 			public void rehash() {
-				RobinHoodHashing rehashed = null;
 
+				int newCapacity = this.capacity;
 				switch (this.capacity) {
 				case 5:
-					rehashed = new RobinHoodHashing(11);
+					newCapacity = 11;
 					break;
 				case 11:
-					rehashed = new RobinHoodHashing(19);
+					newCapacity = 19;
 					break;
 				case 19:
-					rehashed = new RobinHoodHashing(29);
+					newCapacity = 29;
 					break;
 				}
+
+				Element[] tmp = new Element[this.capacity];
 
 				for (int i = 0; i < this.capacity; i++) {
 					if (this.table[i] != null) {
-						rehashed.insert(this.table[i].key);
+						tmp[i] = new Element(this.table[i].key);
+						tmp[i].robinHoodTrieNode = this.table[i].robinHoodTrieNode;
 					}
 				}
 
-				this.table = rehashed.table;
-				this.capacity = rehashed.capacity;
-				this.size = rehashed.size;
-				this.maxProbeLength = rehashed.maxProbeLength;
+				this.table = new Element[newCapacity];
+				this.capacity = newCapacity;
+				this.size = 0;
+				this.maxProbeLength = 0;
+
+				for (int i = 0; i < tmp.length; i++) {
+					if (tmp[i] != null) {
+						insert(tmp[i].key);
+						for (RobinHoodTrieNode.RobinHoodHashing.Element element : this.table) {
+							if (element != null && element.key == tmp[i].key) {
+								element.robinHoodTrieNode = tmp[i].robinHoodTrieNode;
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -267,15 +282,15 @@ public class RobinHoodTrie {
 		}
 
 		// If ended on a node with 0 length then the word doesn't exist
-				if (currentNode.wordLength == 0)
-					return false;
-				// Increase word's importance
-				currentNode.importance++;
-				System.out.println(word + " Importance: " + currentNode.importance + "\n" + word + " Word Length: "
-						+ currentNode.wordLength);
+		if (currentNode.wordLength == 0)
+			return false;
+		// Increase word's importance
+		currentNode.importance++;
+		System.out.println(word + " Importance: " + currentNode.importance + "\n" + word + " Word Length: "
+				+ currentNode.wordLength);
 
-				// Word exists if it passed all the checks above for every character of the word
-				return true;
+		// Word exists if it passed all the checks above for every character of the word
+		return true;
 	}
 
 	/**
@@ -292,8 +307,19 @@ public class RobinHoodTrie {
 		// Create MinHeap to store top k words with most importance
 
 		// Call criteria methods to collect all valid recommendations
+		System.out.println("------------Prefix Criteria------------");
 		prefixCriteria(minHeap, currentNode, stringGiven, true);
+		for (MinHeap.HeapElement element : minHeap.heapContents) {
+			if (element != null)
+				System.out.println(element.word + " " + element.importance);
+		}
+		System.out.println("------------Same Length Criteria------------");
 		sameLengthCriteria(minHeap, currentNode, stringGiven, "", 0);
+		for (MinHeap.HeapElement element : minHeap.heapContents) {
+			if (element != null)
+				System.out.println(element.word + " " + element.importance);
+		}
+		System.out.println("------------Different Length Criteria------------");
 		differentLengthCriteria(minHeap, currentNode, stringGiven, "");
 		for (MinHeap.HeapElement element : minHeap.heapContents) {
 			if (element != null)
@@ -411,9 +437,10 @@ public class RobinHoodTrie {
 			for (RobinHoodTrieNode.RobinHoodHashing.Element element : node.hashTable.table) {
 				if (element != null && element.robinHoodTrieNode != null) {
 					completeCurrentWord = currentWord + element.key;
-					if(completeCurrentWord.equals(wordGiven))
+					if (completeCurrentWord.equals(wordGiven))
 						return;
-					if (element.robinHoodTrieNode.wordLength > 0 && Math.abs(wordGiven.length() - completeCurrentWord.length()) < 3) {
+					if (element.robinHoodTrieNode.wordLength > 0
+							&& Math.abs(wordGiven.length() - completeCurrentWord.length()) < 3) {
 
 						// If currently on a word that is one character shorter
 						if (wordGiven.length() - completeCurrentWord.length() == 1) {
@@ -444,7 +471,7 @@ public class RobinHoodTrie {
 						// If after comparing the two words, maximum strikes were not surpassed, insert
 						// current word in the heap if its importance is higher than that of the top
 						// element's
-						if (strikes <= maxStrikes) {
+						if (strikes <= maxStrikes && completeCurrentWord.length() != wordGiven.length()) {
 							if (minHeap.size < minHeap.maxSize - 1)
 								minHeap.insertMin(completeCurrentWord, element.robinHoodTrieNode.importance);
 							else if (minHeap.getTop().importance < element.robinHoodTrieNode.importance) {
