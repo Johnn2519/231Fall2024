@@ -14,34 +14,41 @@ public class Tester {
 		String searchWord;
 
 		try {
-			dictionary = new Scanner(new File(args[0]));
+			dictionary = new Scanner(new File("dictionary.txt"));
 		} catch (FileNotFoundException e) {
 			System.out.println("Error: the file given as dictionary doesn't exist!");
 			System.exit(0);
 		}
 
 		try {
-			importance = new Scanner(new File(args[1]));
+			importance = new Scanner(new File("importance.txt"));
 		} catch (FileNotFoundException e) {
 			System.out.println("Error: the file given as sample text doesn't exist!");
 			System.exit(0);
 		}
 
 		while (dictionary.hasNextLine()) {
-			wordInput = dictionary.nextLine();
-			wordInput = wordInput.toLowerCase();
+			wordInput = dictionary.nextLine().toLowerCase().trim();
+			if (wordInput.isEmpty() || !wordInput.matches("^[a-z]+$")) { 
+				continue;
+			}
+			System.out.println("Inserting: " + wordInput);
 			trie.insertWord(wordInput);
-			//statTrie.insert(wordInput);
 		}
-
+		
 		while (importance.hasNext()) {
-			wordInput = importance.next();
-			wordInput = wordInput.toLowerCase();
-			if (trie.searchWord(wordInput) == true)
+			wordInput = importance.next().toLowerCase().trim();
+			if (wordInput.isEmpty() || !wordInput.matches("^[a-z]+$")) { 
+				continue;
+			}
+			System.out.println("Searching for: " + wordInput);
+			if (trie.searchWord(wordInput)) {
 				System.out.println("Successfully detected " + wordInput);
-			//if (statTrie.search(wordInput))
-				//System.out.println("Successfully detected in static " + wordInput);
+			} else {
+				System.out.println("Not found: " + wordInput);
+			}
 		}
+		
 
 		System.out.print("Search with (one) word: ");
 		searchWord = scan.nextLine();
