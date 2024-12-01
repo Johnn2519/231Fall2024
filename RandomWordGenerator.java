@@ -5,6 +5,26 @@ import java.util.Random;
 
 public class RandomWordGenerator {
 
+    // Generate word length based on a lognormal distribution between 1 and 26
+    private static int generateWordLength(double mean, double stddev) {
+        Random random = new Random();
+
+        // Generate a lognormal distributed number
+        double logNormal = Math.exp(mean + stddev * random.nextGaussian());
+
+        // Scale the length to be between 1 and 26 (approximately)
+        int wordLength = (int) Math.round(logNormal);
+
+        // Ensure that the word length is within the bounds of 1 to 26 characters
+        if (wordLength < 1) {
+            wordLength = 1;
+        } else if (wordLength > 26) {
+            wordLength = 26;
+        }
+
+        return wordLength;
+    }
+
     private static String generateWord(int minLen, int maxLen) {
         Random random = new Random();
         int wordLength = random.nextInt(maxLen - minLen + 1) + minLen;
@@ -17,10 +37,12 @@ public class RandomWordGenerator {
         return word.toString();
     }
 
-    public static void generateWordsToFile(int m, int x, int y, String filePath) {
+    public static void generateWordsToFile(int m, double mean, double stddev, String filePath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (int i = 0; i < m; i++) {
-                String word = generateWord(x, y);
+                // Get word length based on lognormal distribution
+                int wordLength = generateWordLength(mean, stddev);
+                String word = generateWord(wordLength, wordLength);
                 writer.write(word);
                 writer.newLine();
             }
@@ -31,12 +53,12 @@ public class RandomWordGenerator {
     }
 
     public static void main(String[] args) {
-        int m = 100; // Num of words
-        int x = 3;   // Min
-        int y = 3;   // Max
-        String filePath = "random_words.txt";
+        int m = 100000;  // Number of words
+        double mean = 3.0;  // Mean of the underlying normal distribution
+        double stddev = 1.0; // Standard deviation of the underlying normal distribution
+        String filePath = "100000.txt";
 
         // Generate words and write to file
-        generateWordsToFile(m, x, y, filePath);
+        generateWordsToFile(m, mean, stddev, filePath);
     }
 }
