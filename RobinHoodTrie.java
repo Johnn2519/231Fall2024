@@ -38,19 +38,23 @@ public class RobinHoodTrie {
 					if (element.robinHoodTrieNode == null) {
 						element.robinHoodTrieNode = new RobinHoodTrieNode();
 					}
+					// If last letter of the word is reached, assign word length and stop
+					if (i == word.length() - 1) {
+						currentNode.wordLength = word.length();
+						break;
+					}
 					currentNode = element.robinHoodTrieNode;
 					break;
 				}
 			}
 		}
 
-		currentNode.wordLength = word.length();
 	}
 
 	/**
 	 * Represents a node in the trie
 	 */
-	private static class RobinHoodTrieNode {
+	public static class RobinHoodTrieNode {
 		int importance;
 		int wordLength;
 		RobinHoodHashing hashTable;
@@ -67,7 +71,7 @@ public class RobinHoodTrie {
 		/**
 		 * Represents a Robin Hood Hashing structure
 		 */
-		private static class RobinHoodHashing {
+		public static class RobinHoodHashing {
 			Element[] table;
 			int capacity;
 			int size;
@@ -76,7 +80,7 @@ public class RobinHoodTrie {
 			/**
 			 * Represents an element stored in the hash table
 			 */
-			private static class Element {
+			public static class Element {
 				char key;
 				int probeLength;
 				RobinHoodTrieNode robinHoodTrieNode;
@@ -250,6 +254,12 @@ public class RobinHoodTrie {
 			 */
 			for (RobinHoodTrieNode.RobinHoodHashing.Element element : currentNode.hashTable.table) {
 				if (element != null && element.key == c) {
+					if (i == word.length() - 1 && currentNode.wordLength > 0) {
+						currentNode.importance++;
+						System.out.println(word + " Importance: " + currentNode.importance + "\n" + word
+								+ " Word Length: " + currentNode.wordLength);
+						break;
+					}
 					currentNode = element.robinHoodTrieNode;
 					break;
 				}
@@ -259,9 +269,6 @@ public class RobinHoodTrie {
 		if (currentNode.wordLength == 0)
 			return false;
 		// Increase word's importance
-		currentNode.importance++;
-		System.out.println(word + " Importance: " + currentNode.importance + "\n" + word + " Word Length: "
-				+ currentNode.wordLength);
 
 		// Word exists if it passed all the checks above for every character of the word
 		return true;
@@ -283,7 +290,7 @@ public class RobinHoodTrie {
 		// Call criteria methods to collect all valid recommendations
 		prefixCriteria(minHeap, currentNode, stringGiven, true);
 		sameLengthCriteria(minHeap, currentNode, stringGiven, "", 0);
-		//differentLengthCriteria(minHeap, currentNode, stringGiven, "");
+		differentLengthCriteria(minHeap, currentNode, stringGiven, "");
 		for (MinHeap.HeapElement element : minHeap.heapContents) {
 			if (element != null)
 				System.out.println(element.word + " " + element.importance);
@@ -302,7 +309,7 @@ public class RobinHoodTrie {
 	 *                          avoid printing it
 	 */
 
-	private void prefixCriteria(MinHeap minHeap, RobinHoodTrieNode node, String subString, boolean currentlyOnPrefix) {
+	public void prefixCriteria(MinHeap minHeap, RobinHoodTrieNode node, String subString, boolean currentlyOnPrefix) {
 
 		// Descend Trie only if we're currently still on the prefix within the Trie
 		if (currentlyOnPrefix) {
@@ -353,7 +360,7 @@ public class RobinHoodTrie {
 	 * @param minHeap a heap used to store words with the most importance
 	 * 
 	 */
-	private void sameLengthCriteria(MinHeap minHeap, RobinHoodTrieNode node, String wordGiven, String currentWord,
+	public void sameLengthCriteria(MinHeap minHeap, RobinHoodTrieNode node, String wordGiven, String currentWord,
 			int differences) {
 
 		if (node.hashTable != null && currentWord.length() < wordGiven.length() && !(differences > 2)) {
@@ -380,65 +387,71 @@ public class RobinHoodTrie {
 		}
 	}
 
-	private void differentLengthCriteria(MinHeap minHeap, RobinHoodTrieNode node, String wordGiven,
+	public void differentLengthCriteria(MinHeap minHeap, RobinHoodTrieNode node, String wordGiven,
 			String currentWord) {
 
+		// If currently on valid word and difference in length of two words isn't
+		// greater than 3
 		if (node.hashTable != null) {
-			// If currently on valid word and difference in length of two words isn't
-			// greater than 3
-			if (node.wordLength > 0 && Math.abs(wordGiven.length() - currentWord.length()) < 3) {
-				// Track which letter of the word given and the current word is examined
-				int longerWordIndex = 0, shorterWordIndex = 0;
-				// Track current differences to exit as soon as two strikes are found
-				int strikes = 0;
-				// Sets the upper limit of different characters allowed
-				int maxStrikes = 0;
-				// Holds the longer word out of word given and current word
-				String longerWord = null;
-				// Holds the shorter word out of word given and current word
-				String shorterWord = null;
-				// If currently on a word that is one character shorter
-				if (wordGiven.length() - currentWord.length() == 1) {
-
-					longerWord = wordGiven;
-					shorterWord = currentWord;
-					maxStrikes = 1;
-				} // If currently on a word with maximum 2 characters longer
-				else if ((currentWord.length() - wordGiven.length() > 0)
-						&& (currentWord.length() - wordGiven.length() <= 2)) {
-
-					longerWord = currentWord;
-					shorterWord = wordGiven;
-					maxStrikes = 2;
-				}
-				// Check if current word is "hidden" inside word given
-				while (strikes <= maxStrikes && longerWordIndex < longerWord.length()) {
-					if (longerWord.charAt(longerWordIndex) == shorterWord.charAt(shorterWordIndex))
-						shorterWordIndex++;
-					else
-						strikes++;
-
-					longerWordIndex++;
-				}
-				// If after comparing the two words, maximum strikes were not surpassed, insert
-				// current word in the heap if its importance is higher than that of the top
-				// element's
-				if (strikes < maxStrikes) {
-					if (minHeap.size < minHeap.maxSize - 1)
-						minHeap.insertMin(currentWord, node.importance);
-					else if (minHeap.getTop().importance < node.importance) {
-						minHeap.deleteMin();
-						minHeap.insertMin(currentWord, node.importance);
-					}
-				}
-			}
-
+			// Track which letter of the word given and the current word is examined
+			int longerWordIndex = 0, shorterWordIndex = 0;
+			// Track current differences to exit as soon as two strikes are found
+			int strikes = 0;
+			// Sets the upper limit of different characters allowed
+			int maxStrikes = 0;
+			// Holds the longer word out of word given and current word
+			String longerWord = null;
+			// Holds the shorter word out of word given and current word
+			String shorterWord = null;
+			// Holds complete version of current word
+			String completeCurrentWord = null;
 			for (RobinHoodTrieNode.RobinHoodHashing.Element element : node.hashTable.table) {
 				if (element != null && element.robinHoodTrieNode != null) {
-					differentLengthCriteria(minHeap, element.robinHoodTrieNode, wordGiven, currentWord + element.key);
+					completeCurrentWord = currentWord + element.key;
+					if (node.wordLength > 0 && Math.abs(wordGiven.length() - completeCurrentWord.length()) < 3) {
+
+						// If currently on a word that is one character shorter
+						if (wordGiven.length() - completeCurrentWord.length() == 1) {
+
+							longerWord = wordGiven;
+							shorterWord = completeCurrentWord;
+							maxStrikes = 1;
+						} // If currently on a word with maximum 2 characters longer
+						else if ((completeCurrentWord.length() - wordGiven.length() > 0)
+								&& (completeCurrentWord.length() - wordGiven.length() <= 2)) {
+
+							longerWord = completeCurrentWord;
+							shorterWord = wordGiven;
+							maxStrikes = 2;
+						}
+						// Check if current word is "hidden" inside word given
+						while (strikes <= maxStrikes && longerWordIndex < longerWord.length()
+								&& shorterWordIndex < shorterWord.length()) {
+							if (longerWord.charAt(longerWordIndex) == shorterWord.charAt(shorterWordIndex))
+								shorterWordIndex++;
+							else
+								strikes++;
+
+							longerWordIndex++;
+						}
+						// If after comparing the two words, maximum strikes were not surpassed, insert
+						// current word in the heap if its importance is higher than that of the top
+						// element's
+						if (strikes <= maxStrikes) {
+							if (minHeap.size < minHeap.maxSize - 1)
+								minHeap.insertMin(completeCurrentWord, node.importance);
+							else if (minHeap.getTop().importance < node.importance) {
+								minHeap.deleteMin();
+								minHeap.insertMin(completeCurrentWord, node.importance);
+							}
+						}
+					}
+					differentLengthCriteria(minHeap, element.robinHoodTrieNode, wordGiven, completeCurrentWord);
+
 				}
 			}
 		}
+
 	}
 
 }

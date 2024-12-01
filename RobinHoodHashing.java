@@ -9,13 +9,13 @@ public class RobinHoodHashing {
 	int size;
 	int maxProbeLength;
 
-	Trie trie = new Trie();
+	RobinHoodTrie trie = new RobinHoodTrie();
 
 	class Element {
 
 		char key;
 		int probeLength;
-		Trie.TrieNode trieNode;
+		RobinHoodTrie.RobinHoodTrieNode trieNode;
 
 		public Element(char c) {
 			this.key = c;
