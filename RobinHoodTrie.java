@@ -411,7 +411,9 @@ public class RobinHoodTrie {
 			for (RobinHoodTrieNode.RobinHoodHashing.Element element : node.hashTable.table) {
 				if (element != null && element.robinHoodTrieNode != null) {
 					completeCurrentWord = currentWord + element.key;
-					if (node.wordLength > 0 && Math.abs(wordGiven.length() - completeCurrentWord.length()) < 3) {
+					if(completeCurrentWord.equals(wordGiven))
+						return;
+					if (element.robinHoodTrieNode.wordLength > 0 && Math.abs(wordGiven.length() - completeCurrentWord.length()) < 3) {
 
 						// If currently on a word that is one character shorter
 						if (wordGiven.length() - completeCurrentWord.length() == 1) {
@@ -444,14 +446,14 @@ public class RobinHoodTrie {
 						// element's
 						if (strikes <= maxStrikes) {
 							if (minHeap.size < minHeap.maxSize - 1)
-								minHeap.insertMin(completeCurrentWord, node.importance);
-							else if (minHeap.getTop().importance < node.importance) {
+								minHeap.insertMin(completeCurrentWord, element.robinHoodTrieNode.importance);
+							else if (minHeap.getTop().importance < element.robinHoodTrieNode.importance) {
 								minHeap.deleteMin();
-								minHeap.insertMin(completeCurrentWord, node.importance);
+								minHeap.insertMin(completeCurrentWord, element.robinHoodTrieNode.importance);
 							}
 						}
 					}
-					differentLengthCriteria(minHeap, element.robinHoodTrieNode, wordGiven, completeCurrentWord);
+					differentLengthCriteria(minHeap, element.robinHoodTrieNode, wordGiven, currentWord + element.key);
 
 				}
 			}
