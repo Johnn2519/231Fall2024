@@ -1,53 +1,47 @@
 public class Trie {
 
-	TrieNode root;
+    TrieNode root;
 
-	static int ALPHABET_SIZE = 26;
+    static int ALPHABET_SIZE = 26;
 
-	class TrieNode {
+    class TrieNode {
 
-		int wordLength;
-		TrieNode[] subTrieNodes;
+        int wordLength;
+        TrieNode[] subTrieNodes;
 
-		public TrieNode() {
-			this.wordLength = 0;
-			this.subTrieNodes = new TrieNode[ALPHABET_SIZE];
-		}
+        public TrieNode() {
+            this.wordLength = 0;
+            this.subTrieNodes = new TrieNode[ALPHABET_SIZE];
+        }
 
-	}
+    }
 
-	public Trie() {
+    public Trie() {
+        this.root = new TrieNode();
+    }
 
-		this.root = new TrieNode();
-	}
+    public void insert(String word) {
+        TrieNode temp = this.root;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            int index = c - 'a'; // Convert character to index
+            if (temp.subTrieNodes[index] == null)
+                temp.subTrieNodes[index] = new TrieNode(); // Create new Trie Node
+            temp = temp.subTrieNodes[index]; // Move downwards
+        }
+        temp.wordLength = word.length();
+    }
 
-	public void insert(String word) {
-		TrieNode temp = this.root;
-		for (int i = 0; i < word.length(); i++) {
-			char c = word.charAt(i);
-			if (temp.subTrieNodes[c] == null)
-				temp.subTrieNodes[c] = new TrieNode(); // Create new Trie Node being referenced by the specific
-														// slot representing the character
-			temp = temp.subTrieNodes[c]; // Move downwards
-		}
-		temp.wordLength = word.length();
-	}
-
-	public boolean search(String word) {
-
-		TrieNode temp = this.root;
-		for (int i = 0; i < word.length(); i++) {
-			char c = word.charAt(i);
-			if (temp.subTrieNodes[c] == null) { // If a Trie Node representing a character of the word being
-												// searched is null then the word doesn't exist
-				return false;
-			}
-			temp = temp.subTrieNodes[c]; // Move to next Trie Node
-
-		}
-
-		return temp.wordLength != 0;
-
-	}
-
+    public boolean search(String word) {
+        TrieNode temp = this.root;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            int index = c - 'a'; // Convert character to index
+            if (temp.subTrieNodes[index] == null) { // If Trie Node is null, word doesn't exist
+                return false;
+            }
+            temp = temp.subTrieNodes[index]; // Move to next Trie Node
+        }
+        return temp.wordLength != 0;
+    }
 }

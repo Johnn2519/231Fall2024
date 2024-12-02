@@ -5,7 +5,7 @@ public class MinHeap {
 	int maxSize;
 	int size;
 
-	// Initialises a heap with a maximum of k spots
+	// Initialises a heap with a maximum of k slots
 	public MinHeap(int k) {
 		/*
 		 * Initialise a heap of maxSize k (for storing the k most important words) + 1
@@ -17,6 +17,7 @@ public class MinHeap {
 
 	}
 
+	// fucntion representing an element in the heap
 	public class HeapElement {
 		String word;
 		int importance;
@@ -29,10 +30,12 @@ public class MinHeap {
 
 	}
 
+	// returns the top element in the heap
 	public HeapElement getTop() {
 		return this.heapContents[1];
 	}
 
+	// inserts an element into the heap
 	public void insertMin(String wordValue, int importanceValue) {
 		if (this.size >= this.maxSize - 1) {
 			throw new IllegalStateException("Heap is full");
@@ -43,6 +46,7 @@ public class MinHeap {
 		percolateUp(newElement); // Re-heapify
 	}
 
+	// deletes element from the heap
 	public HeapElement deleteMin() {
 		if (size == 0) {
 			throw new IllegalStateException("Heap is empty");
@@ -74,18 +78,15 @@ public class MinHeap {
 			if (pos == 1) {
 				break;
 			}
-			// If parent has larger importance than its child swap them
-			if (this.heapContents[pos / 2].importance > newElement.importance) {
-				// Swap new element's parent with the new element
-				replacement = this.heapContents[pos / 2];
+			if (this.heapContents[pos / 2].importance > newElement.importance) {// If parent has larger importance than
+																				// its child swap them
+				replacement = this.heapContents[pos / 2];// Swap swap the parent with the new lement
 				this.heapContents[pos / 2] = newElement;
 				this.heapContents[pos] = replacement;
-				// Update position by moving to where the switched element was
-				pos /= 2;
+				pos /= 2;// Update the position
 			} else {
-				// Found final position, end percolate up
 				this.heapContents[pos] = newElement;
-				break;
+				break;// Last position found, end
 			}
 
 		}
@@ -103,20 +104,18 @@ public class MinHeap {
 					&& this.heapContents[child + 1].importance < this.heapContents[child].importance) {
 				child++; // Right child is smaller
 			}
-
-			// If saved element is smaller than the smaller child, stop
-			if (savedElement.importance <= this.heapContents[child].importance) {
+			if (savedElement.importance <= this.heapContents[child].importance) {// If saved element is smaller than the
+																					// smaller child, stop
 				break;
 			}
-
-			// Move the smaller child up
-			this.heapContents[pos] = this.heapContents[child];
-			pos = child; // Move down to child's position
+			this.heapContents[pos] = this.heapContents[child];// Move the smaller child up
+			pos = child; // Move down a position
 		}
 
 		this.heapContents[pos] = savedElement; // Place saved element in its final position
 	}
 
+	// debug and test function
 	public static void main(String args[]) {
 
 		MinHeap m = new MinHeap(6);

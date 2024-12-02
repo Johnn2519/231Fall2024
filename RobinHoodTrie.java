@@ -193,15 +193,15 @@ public class RobinHoodTrie {
 
 				int newCapacity = this.capacity;
 				switch (this.capacity) {
-				case 5:
-					newCapacity = 11;
-					break;
-				case 11:
-					newCapacity = 19;
-					break;
-				case 19:
-					newCapacity = 29;
-					break;
+					case 5:
+						newCapacity = 11;
+						break;
+					case 11:
+						newCapacity = 19;
+						break;
+					case 19:
+						newCapacity = 29;
+						break;
 				}
 
 				Element[] tmp = new Element[this.capacity];
@@ -294,9 +294,7 @@ public class RobinHoodTrie {
 	}
 
 	/**
-	 * NOT WORKING PROPERLY
-	 * 
-	 * Thelei na allaxtei gia tes odigies tou lab
+	 * Uses the criteria functions to generate word suggestions
 	 * 
 	 * @param prefix
 	 * @return

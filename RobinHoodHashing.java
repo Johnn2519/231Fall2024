@@ -25,6 +25,7 @@ public class RobinHoodHashing {
 
 	}
 
+	// default construtor
 	public RobinHoodHashing() {
 
 		this.capacity = 5;
@@ -34,6 +35,7 @@ public class RobinHoodHashing {
 
 	}
 
+	// consturctor with capacity
 	public RobinHoodHashing(int newCapacity) {
 
 		this.capacity = newCapacity;
@@ -161,15 +163,15 @@ public class RobinHoodHashing {
 		 */
 		switch (this.capacity) {
 
-		case 5:
-			rehashed = new RobinHoodHashing(11);
-			break;
-		case 11:
-			rehashed = new RobinHoodHashing(19);
-			break;
-		case 19:
-			rehashed = new RobinHoodHashing(29);
-			break;
+			case 5:
+				rehashed = new RobinHoodHashing(11);
+				break;
+			case 11:
+				rehashed = new RobinHoodHashing(19);
+				break;
+			case 19:
+				rehashed = new RobinHoodHashing(29);
+				break;
 		}
 
 		// Insert all elements from the previous hash table to the new one
