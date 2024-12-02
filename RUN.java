@@ -1,3 +1,4 @@
+package ID1148307.ID1127046;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -39,6 +40,7 @@ public class RUN {
 
 		while (importance.hasNext()) {// while the text has more words
 			wordInput = importance.next().toLowerCase().trim();// read next word, make it lowercase, remove whitespaces
+			wordInput = wordInput.replaceAll("^[^a-z]+|[^a-z]+$", "");
 			if (wordInput.isEmpty() || !wordInput.matches("^[a-z]+$")) {
 				continue;// if the word read is not null or does not contain special characters
 			}

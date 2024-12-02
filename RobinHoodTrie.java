@@ -1,3 +1,4 @@
+package ID1148307.ID1127046;
 /**
  * Represents a Robin Hood Trie data structure
  */
@@ -193,15 +194,15 @@ public class RobinHoodTrie {
 
 				int newCapacity = this.capacity;
 				switch (this.capacity) {
-					case 5:
-						newCapacity = 11;
-						break;
-					case 11:
-						newCapacity = 19;
-						break;
-					case 19:
-						newCapacity = 29;
-						break;
+				case 5:
+					newCapacity = 11;
+					break;
+				case 11:
+					newCapacity = 19;
+					break;
+				case 19:
+					newCapacity = 29;
+					break;
 				}
 
 				Element[] tmp = new Element[this.capacity];
@@ -426,6 +427,8 @@ public class RobinHoodTrie {
 			int strikes = 0;
 			// Sets the upper limit of different characters allowed
 			int maxStrikes = 0;
+			// Holds amount of common characters
+			int commons = 0;
 			// Holds the longer word out of word given and current word
 			String longerWord = null;
 			// Holds the shorter word out of word given and current word
@@ -438,7 +441,9 @@ public class RobinHoodTrie {
 					if (completeCurrentWord.equals(wordGiven))
 						return;
 					if (element.robinHoodTrieNode.wordLength > 0
-							&& Math.abs(wordGiven.length() - completeCurrentWord.length()) < 3) {
+							&& (wordGiven.length() - completeCurrentWord.length() == 1
+									|| (completeCurrentWord.length() - wordGiven.length() > 0)
+											&& (completeCurrentWord.length() - wordGiven.length() <= 2))) {
 
 						// If currently on a word that is one character shorter
 						if (wordGiven.length() - completeCurrentWord.length() == 1) {
@@ -458,9 +463,10 @@ public class RobinHoodTrie {
 							// Check if current word is "hidden" inside word given
 							while (strikes <= maxStrikes && longerWordIndex < longerWord.length()
 									&& shorterWordIndex < shorterWord.length()) {
-								if (longerWord.charAt(longerWordIndex) == shorterWord.charAt(shorterWordIndex))
+								if (longerWord.charAt(longerWordIndex) == shorterWord.charAt(shorterWordIndex)) {
 									shorterWordIndex++;
-								else
+									commons++;
+								} else
 									strikes++;
 
 								longerWordIndex++;
@@ -469,7 +475,16 @@ public class RobinHoodTrie {
 						// If after comparing the two words, maximum strikes were not surpassed, insert
 						// current word in the heap if its importance is higher than that of the top
 						// element's
-						if (strikes <= maxStrikes && completeCurrentWord.length() != wordGiven.length()) {
+						if (completeCurrentWord.length() < wordGiven.length() && strikes <= maxStrikes
+								&& completeCurrentWord.length() != wordGiven.length()) {
+							if (minHeap.size < minHeap.maxSize - 1)
+								minHeap.insertMin(completeCurrentWord, element.robinHoodTrieNode.importance);
+							else if (minHeap.getTop().importance < element.robinHoodTrieNode.importance) {
+								minHeap.deleteMin();
+								minHeap.insertMin(completeCurrentWord, element.robinHoodTrieNode.importance);
+							}
+						} else if (commons == shorterWord.length()
+								&& completeCurrentWord.length() != wordGiven.length()) {
 							if (minHeap.size < minHeap.maxSize - 1)
 								minHeap.insertMin(completeCurrentWord, element.robinHoodTrieNode.importance);
 							else if (minHeap.getTop().importance < element.robinHoodTrieNode.importance) {

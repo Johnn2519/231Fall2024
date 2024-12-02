@@ -1,3 +1,4 @@
+package ID1148307.ID1127046;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -47,9 +48,9 @@ public class RandomWordGenerator {
     }
 
     public static void main(String[] args) {
-        int m = 100000; // num of words
+        int m = 300000; // num of words
 
-        String filePath = "100000.txt";
+        String filePath = "distributed-dictionary3.txt";
 
         // generate words and write to file
         generateWordsToFile(m, 3.0, 1.0, filePath);
