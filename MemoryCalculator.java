@@ -22,6 +22,9 @@ public class MemoryCalculator {
 		// Null node consumes no memory
 		if (node == null)
 			return 0;
+		// Null table consumes no memory
+		if(node.hashTable == null)
+			return 0;
 		// Add memory for the current node
 		long sum = 16 + calcRobinHoodTable(node.hashTable);
 		for (int i = 0; i < node.hashTable.capacity; i++)
@@ -32,9 +35,7 @@ public class MemoryCalculator {
 	}
 
 	private static long calcRobinHoodTable(RobinHoodTrie.RobinHoodTrieNode.RobinHoodHashing table) {
-		// Null table consumes no memory
-		if (table == null)
-			return 0;
+		
 		// Memory for the hash table elements
 		return (long) table.capacity * 8 + 12;
 	}
