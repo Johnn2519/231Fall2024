@@ -1,0 +1,14 @@
+size:1000 dictionaries/same-length/length 4/set5-len4 568388 143672
+size:2500 dictionaries/same-length/length 4/set5-len4 1240964 294692
+size:5000 dictionaries/same-length/length 4/set5-len4 2269264 519880
+size:10000 dictionaries/same-length/length 4/set5-len4 4124724 894372
+size:25000 dictionaries/same-length/length 4/set5-len4 8684048 1633272
+size:50000 dictionaries/same-length/length 4/set5-len4 14591462 2316538
+size:75000 dictionaries/same-length/length 4/set5-len4 19720080 2888548
+size:100000 dictionaries/same-length/length 4/set5-len4 24432858 3415282
+size:200000 dictionaries/same-length/length 4/set5-len4 40699208 5226488
+size:300000 dictionaries/same-length/length 4/set5-len4 53812180 6578496
+size:400000 dictionaries/same-length/length 4/set5-len4 64362086 7565182
+size:500000 dictionaries/same-length/length 4/set5-len4 72892456 8534044
+size:600000 dictionaries/same-length/length 4/set5-len4 79573016 9334956
+size:650000 dictionaries/same-length/length 4/set5-len4 82459940 9647552
