@@ -1,4 +1,4 @@
-package ID1148307.ID1127046;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
