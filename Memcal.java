@@ -52,12 +52,12 @@ public class Memcal {
         System.out.println("Enter word limit: \n");
         int until = Integer.valueOf(myObj.nextLine());
         System.out.println("Lognormal dist? (y/n): \n");
-        String yn = myObj.nextLine();
+        char yn = myObj.nextLine().charAt(0);
         boolean log = true;
         int staticWordLength = 10;
-        if (yn == "y") {
+        if (yn == 'y') {
             log = true;
-        } else if (yn == "n") {
+        } else if (yn == 'n') {
             log = false;
             System.out.println("Enter static word length: \n");
             staticWordLength = Integer.valueOf(myObj.nextLine());
@@ -65,11 +65,11 @@ public class Memcal {
             System.out.println("Invalid will continue with log\n");
         }
         System.out.println("RH trie? (y/n): \n");
-        yn = myObj.nextLine();
+        yn = myObj.nextLine().charAt(0);
         boolean rh = true;
-        if (yn == "y") {
+        if (yn == 'y') {
             rh = true;
-        } else if (yn == "n") {
+        } else if (yn == 'n') {
             rh = false;
         } else {
             System.out.println("Invalid will continue with RH\n");
