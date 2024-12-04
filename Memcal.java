@@ -64,8 +64,19 @@ public class Memcal {
         } else {
             System.out.println("Invalid will continue with log\n");
         }
+        System.out.println("RH trie? (y/n): \n");
+        yn = myObj.nextLine();
+        boolean rh = true;
+        if (yn == "y") {
+            rh = true;
+        } else if (yn == "n") {
+            rh = false;
+        } else {
+            System.out.println("Invalid will continue with RH\n");
+        }
         String dic = "words";
         myObj.close();
+        String out = "";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("y.txt"))) {
             try (BufferedWriter sriter = new BufferedWriter(new FileWriter("x.txt"))) {
                 while (words <= until) {
@@ -74,7 +85,11 @@ public class Memcal {
                     } else {
                         RandomWordGenerator.generateFixedLengthWordsToFile(words, staticWordLength, dic);
                     }
-                    String out = "" + fillTrieRh(dic);
+                    if (rh) {
+                        out = "" + fillTrieRh(dic);
+                    } else {
+                        out = "" + fillTrie(dic);
+                    }
                     writer.write(out);
                     writer.newLine();
                     sriter.write(Integer.toString(words));
